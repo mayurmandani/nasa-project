@@ -9,5 +9,4 @@ package-lock.json
 
 # production
 /build
-/public
 
