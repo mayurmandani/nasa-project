@@ -42,7 +42,7 @@ async function saveLaunch(launch) {
     const planet = await planets.findOne({
         keplerName: launch.target,
     });
-    if(!planets) {
+    if(!planet) {
         throw new Error('No Matching planets found!');
     }
     await launchesDatabase.updateOne({
@@ -50,20 +50,17 @@ async function saveLaunch(launch) {
     }, launch, {
         upsert: true,
     });
-
 }
 
-function addNewLaunch(launch) {
-    latestFlightNumber++;
-    launches.set(
-        latestFlightNumber,
-        Object.assign(launch, {
+async function scheduleNewLaunch(launch) {
+    const newFlightNumber = await getLatestFlightNumber() + 1;
+        const newLaunch = Object.assign(launch, {
             success: true,
             upcoming: true,
             customers: ['Zero to Mastery', 'NASA'],
-            flightNumber: latestFlightNumber,
-        })
-    );
+            flightNumber: newFlightNumber,
+        });
+      await saveLaunch(newLaunch);      
 }
 
 function abortLaunchById(launchId) {
@@ -76,6 +73,6 @@ function abortLaunchById(launchId) {
 module.exports = {
     existsLaunchWithId,
     getAllLaunches,
-    addNewLaunch,
+    scheduleNewLaunch,
     abortLaunchById,
 };
