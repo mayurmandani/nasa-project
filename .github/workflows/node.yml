@@ -7,11 +7,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ 16, 18, 20 ]
+      name: Node ${{ matrix.node }} sample  
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js version 20
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v4
+      - name: Setup node
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ matrix.node }}
       - run: npm install
       - run: npm run build --prefix client 
